@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:login_user/MainPage.dart';
 import 'package:login_user/SignUpScreen.dart';
 import 'package:login_user/storeclass.dart';
@@ -77,6 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
+
                       Container(
                         margin: EdgeInsets.symmetric(horizontal: 30),
                         child: Form(
@@ -119,7 +121,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       Observer(builder: (context) {
                         return obj.isLoading
-                            ? CircularProgressIndicator()
+                            ? Center(
+                          child: SpinKitFoldingCube(color: Colors.blue, size: 30,),
+                        )
                             : MaterialButton(
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.only(

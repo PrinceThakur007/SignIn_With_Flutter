@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:login_user/MainPage.dart';
 import 'package:login_user/storeclass.dart';
 
@@ -20,7 +22,6 @@ class _RegisterState extends State<Register> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
         // appBar: AppBar(
         //   title: Text("Register"),
@@ -107,20 +108,26 @@ class _RegisterState extends State<Register> {
                     SizedBox(
                       height: 50,
                     ),
-                    MaterialButton(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(15),
-                              bottomLeft: Radius.circular(15))),
-                      onPressed: () async {
-                        if (_formkey.currentState.validate()) {
-                          _registerAccount();
-                        }
-                      },
-                      child: Text("Register"),
-                      color: Colors.blueAccent,
-                      textColor: Colors.white,
-                    ),
+                    Observer(builder: (context) {
+                      return obj.isLoading
+                          ? Center(
+                        child: SpinKitFoldingCube(color: Colors.blue, size: 30,),
+                      )
+                          : MaterialButton(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(15),
+                                      bottomLeft: Radius.circular(15))),
+                              onPressed: () async {
+                                if (_formkey.currentState.validate()) {
+                                  _registerAccount();
+                                }
+                              },
+                              child: Text("Register"),
+                              color: Colors.blueAccent,
+                              textColor: Colors.white,
+                            );
+                    }),
                   ],
                 ),
               ),
@@ -132,6 +139,7 @@ class _RegisterState extends State<Register> {
   }
 
   void _registerAccount() async {
+    obj.changeLoading();
     final User user = (await _auth.createUserWithEmailAndPassword(
             email: email_data.text, password: password_data.text))
         .user;
@@ -147,6 +155,7 @@ class _RegisterState extends State<Register> {
           builder: (context) => MainPage(
                 user: user1,
               )));
+      obj.changeLoading();
     }
   }
 }
