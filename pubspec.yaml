@@ -30,11 +30,14 @@ dependencies:
   cupertino_icons: ^1.0.0
   firebase_auth: ^0.18.1+1
   firebase_core: ^0.5.0
+  mobx: ^1.1.1
+  flutter_mobx: ^1.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  mobx_codegen:
+  build_runner:
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

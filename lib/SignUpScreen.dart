@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:login_user/MainPage.dart';
+import 'package:login_user/storeclass.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -15,9 +16,11 @@ class _RegisterState extends State<Register> {
   final email_data = TextEditingController();
   final password_data = TextEditingController();
   final fullname_data = TextEditingController();
+  StoreClass obj = new StoreClass();
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         // appBar: AppBar(
         //   title: Text("Register"),

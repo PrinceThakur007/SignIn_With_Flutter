@@ -25,6 +25,8 @@ class _MainPageState extends State<MainPage> {
         child: Column(
           children: [
             Text(widget.user.displayName),
+            Text(widget.user.emailVerified.toString()),
+            Text(widget.user.phoneNumber.toString()),
             Container(
               child: RaisedButton(
                 onPressed: () {

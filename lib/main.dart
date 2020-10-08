@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:login_user/MainPage.dart';
 import 'package:login_user/SignUpScreen.dart';
+import 'package:login_user/storeclass.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,9 +42,13 @@ class _MyHomePageState extends State<MyHomePage> {
   final password_data = TextEditingController();
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
+  StoreClass obj = new StoreClass();
+
+  // bool isloading = false;
 
   @override
   Widget build(BuildContext context) {
+    print("Hello");
     return Scaffold(
         key: _scaffoldkey,
         // appBar: AppBar(
@@ -111,20 +117,24 @@ class _MyHomePageState extends State<MyHomePage> {
                       SizedBox(
                         height: 30,
                       ),
-                      MaterialButton(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(15),
-                                bottomLeft: Radius.circular(15))),
-                        onPressed: () async {
-                          if (_formkey.currentState.validate()) {
-                            _signInWithEmailPassword();
-                          }
-                        },
-                        child: Text("Login"),
-                        color: Colors.blueAccent,
-                        textColor: Colors.white,
-                      ),
+                      Observer(builder: (context) {
+                        return obj.isLoading
+                            ? CircularProgressIndicator()
+                            : MaterialButton(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                        topRight: Radius.circular(15),
+                                        bottomLeft: Radius.circular(15))),
+                                onPressed: () async {
+                                  if (_formkey.currentState.validate()) {
+                                    _signInWithEmailPassword();
+                                  }
+                                },
+                                child: Text("Login"),
+                                color: Colors.blueAccent,
+                                textColor: Colors.white,
+                              );
+                      }),
                       SizedBox(
                         height: 20,
                       ),
@@ -158,10 +168,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _signInWithEmailPassword() async {
     try {
+      obj.changeLoading();
       final User user = (await _auth.signInWithEmailAndPassword(
               email: email_data.text, password: password_data.text))
           .user;
-
+      obj.changeLoading();
       if (!user.emailVerified) {
         await user.sendEmailVerification();
       }
@@ -178,6 +189,7 @@ class _MyHomePageState extends State<MyHomePage> {
           content: Text("Failed to sign in with email and password"),
         ),
       );
+      obj.changeLoading();
       print(e);
     }
   }
