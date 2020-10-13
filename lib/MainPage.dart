@@ -103,24 +103,7 @@ class _MainPageState extends State<MainPage> {
               ),
               margin: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
             ),
-            // Card(
-            //   elevation: 10,
-            //   child: Column(
-            //     children: [
-            //       Observer(builder: (context) {
-            //         list = obj.listOfUsers;
-            //
-            //         if (list.isEmpty) {
-            //         return  SpinKitFoldingCube(
-            //             color: Colors.blue,
-            //           );
-            //         } else {
-            //           return Text(list.elementAt(0).login);
-            //         }
-            //       })
-            //     ],
-            //   ),
-            // ),
+            
             Container(
               child: RaisedButton(
                 onPressed: () async {
@@ -129,7 +112,25 @@ class _MainPageState extends State<MainPage> {
                     token = value.toString();
                     print(value.toString());
                   });
-
+if (_pickedFile != null) {
+         final _storage= FirebaseStorage.instance;
+        //Main part of uploading file to the cloud storage
+        var data = await _storage
+            .ref()
+            .child(
+            'foldername/${DateTime
+                .now()
+                .second}-${DateTime
+                .now()
+                .microsecond}')
+            .putFile(_imagepath)
+            .onComplete;
+        downloadURL = await data.ref.getDownloadURL();
+      
+        setState(() {
+          _imageurl = downloadURL;
+        });
+      } else {}
                   _add(title.text, description.text, _imageurl);
                 },
                 child: Text("Upload data"),
@@ -171,6 +172,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future _uploadImage() async {
+   
     await Permission.photos.request(); //  show pop up for the permission
     var permission = await Permission.photos.status;
     final _picker = ImagePicker();
@@ -181,6 +183,7 @@ class _MainPageState extends State<MainPage> {
         _imagepath = File(_pickedFile.path);
       });
       // if (_pickedFile != null) {
+      //    final _storage= FirebaseStorage.instance;
       //   //Main part of uploading file to the cloud storage
       //   var data = await _storage
       //       .ref()
@@ -193,7 +196,7 @@ class _MainPageState extends State<MainPage> {
       //       .putFile(_imagepath)
       //       .onComplete;
       //   downloadURL = await data.ref.getDownloadURL();
-      //
+      
       //   setState(() {
       //     _imageurl = downloadURL;
       //   });
