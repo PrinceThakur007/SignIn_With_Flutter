@@ -1,8 +1,16 @@
+// import 'dart:html';
+
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:login_user/CurdMethods.dart';
 import 'package:login_user/MainPage.dart';
 import 'package:login_user/storeclass.dart';
 
@@ -19,6 +27,23 @@ class _RegisterState extends State<Register> {
   final password_data = TextEditingController();
   final fullname_data = TextEditingController();
   StoreClass obj = new StoreClass();
+  File file;
+  final picker = ImagePicker();
+
+
+
+  Future getImage() async {
+    final pickedFile = await picker.getVideo(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = File(pickedFile.path);
+        print(file.path);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +63,7 @@ class _RegisterState extends State<Register> {
         Center(
           child: Container(
             width: MediaQuery.of(context).size.width * 0.9,
-            height: MediaQuery.of(context).size.height * 0.55,
+            height: MediaQuery.of(context).size.height * 0.80,
             child: Form(
               key: _formkey,
               child: Card(
@@ -56,11 +81,25 @@ class _RegisterState extends State<Register> {
                       child: Column(
                         children: [
                           TextFormField(
-                            decoration: InputDecoration(hintText: "Full Name"),
+                            decoration: InputDecoration(hintText: "Full Name" ),
                             controller: fullname_data,
                             validator: (val) {
                               if (val.isEmpty) {
                                 return "Please Fill Full name";
+                              }
+
+                              return null;
+                            },
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          TextFormField(
+                            decoration:
+                                InputDecoration(hintText: "Phone Number"),
+                            validator: (val) {
+                              if (val.isEmpty) {
+                                return "Please your phone number";
                               }
 
                               return null;
@@ -111,8 +150,11 @@ class _RegisterState extends State<Register> {
                     Observer(builder: (context) {
                       return obj.isLoading
                           ? Center(
-                        child: SpinKitFoldingCube(color: Colors.blue, size: 30,),
-                      )
+                              child: SpinKitFoldingCube(
+                                color: Colors.blue,
+                                size: 30,
+                              ),
+                            )
                           : MaterialButton(
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.only(
@@ -128,6 +170,40 @@ class _RegisterState extends State<Register> {
                               textColor: Colors.white,
                             );
                     }),
+                    MaterialButton(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(15),
+                              bottomLeft: Radius.circular(15))),
+                      onPressed: getImage,
+                      // async {
+                      // try {
+                      //   FilePickerResult result =
+                      //       await FilePicker.platform.pickFiles();
+                      //   if (result != null) {
+                      //     file = File(result.files.single.path);
+                      //   }
+                      // } catch (e) {
+                      //   print("$e--------------");
+                      // }
+                      // print(Uri(path: file.path));
+                      // },
+                      child: Text("Upload"),
+                      color: Colors.blueAccent,
+                      textColor: Colors.white,
+                    ),
+                    MaterialButton(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(15),
+                              bottomLeft: Radius.circular(15))),
+                      onPressed: () async {},
+                      child: Text("Camera"),
+                      color: Colors.blueAccent,
+                      textColor: Colors.white,
+                    ),
+
+                    // Image.file(file.path);
                   ],
                 ),
               ),
@@ -149,7 +225,8 @@ class _RegisterState extends State<Register> {
         await user.sendEmailVerification();
       }
 
-      await user.updateProfile(displayName: fullname_data.text);
+      await user.updateProfile(
+          displayName: fullname_data.text, photoURL: file.path);
       final user1 = _auth.currentUser;
       Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => MainPage(

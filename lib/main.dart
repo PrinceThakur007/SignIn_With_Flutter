@@ -39,6 +39,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+
   final email_data = TextEditingController();
   final password_data = TextEditingController();
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
@@ -78,7 +80,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-
                       Container(
                         margin: EdgeInsets.symmetric(horizontal: 30),
                         child: Form(
@@ -122,8 +123,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       Observer(builder: (context) {
                         return obj.isLoading
                             ? Center(
-                          child: SpinKitFoldingCube(color: Colors.blue, size: 30,),
-                        )
+                                child: SpinKitFoldingCube(
+                                  color: Colors.blue,
+                                  size: 30,
+                                ),
+                              )
                             : MaterialButton(
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.only(
